@@ -1,0 +1,22 @@
+{
+  "name": "rag-chatbot",
+  "author": "Raissa Hohenester",
+  "version": "1.0.0",
+  "description": "A small RAG chatbot using OpenAI and an in-memory vector store",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "openai": "^4.52.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3"
+  }
+}
