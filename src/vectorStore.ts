@@ -22,6 +22,7 @@ function cosineSimilarity(a: number[], b: number[]): number {
   return dot / (Math.sqrt(normA) * Math.sqrt(normB));
 }
 
+// The 🤍 of RAG
 export class VectorStore {
   private documents: Document[] = [];
 
@@ -29,6 +30,7 @@ export class VectorStore {
     this.documents.push(doc);
   }
 
+  // Scores every stored document against the query vector, sorts by score descending, returns the top K results
   similaritySearch(queryEmbedding: number[], topK = 5): SearchResult[] {
     return this.documents
       .map((doc) => ({

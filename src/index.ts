@@ -43,6 +43,7 @@ async function main() {
   });
 
   // 3. Chat loop
+  // When input arrives, do something and at the end of that something, ask for input again
   const prompt = () => {
     rl.question("You: ", async (input) => {
       const query = input.trim();

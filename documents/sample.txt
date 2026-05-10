@@ -1,0 +1,78 @@
+What is RAG?
+============
+
+RAG stands for Retrieval-Augmented Generation. It is a technique that combines two things:
+a retrieval system (which finds relevant information) and a language model (which generates
+answers). Instead of relying only on what the model learned during training, RAG lets the
+model answer questions based on documents you provide at runtime.
+
+This means you can chat with your own data — internal documents, manuals, notes, research
+papers — without retraining or fine-tuning the model.
+
+
+How This Chatbot Works
+======================
+
+When you start the chatbot, it reads all .txt and .md files from the documents/ folder.
+Each file is split into small overlapping chunks of around 500 characters. Each chunk is
+then sent to OpenAI's embedding model (text-embedding-3-small), which turns the text into
+a list of numbers called a vector. These vectors are stored in memory.
+
+When you ask a question, the same embedding model turns your question into a vector.
+The chatbot then compares that vector against all stored vectors using cosine similarity —
+a mathematical formula that measures how similar two vectors are in direction. The top 5
+most similar chunks are retrieved and injected into the prompt sent to the language model.
+
+The language model (gpt-4o-mini) reads those chunks and generates an answer grounded in
+your documents. If the documents don't contain enough information to answer, the model
+is instructed to say so honestly instead of making something up.
+
+
+Why Chunk Documents?
+====================
+
+Documents are split into chunks for two reasons. First, embedding models have a token
+limit, so very long texts would get cut off. Second, and more importantly, chunking makes
+retrieval more precise. If a document covers 10 different topics, embedding the whole thing
+produces one blurry average vector. Chunking means each vector represents one focused idea,
+so the right piece of information is much easier to find.
+
+Chunks overlap by 100 characters so that sentences near a boundary are not split in half
+and lose their context.
+
+
+What is Cosine Similarity?
+==========================
+
+Cosine similarity measures the angle between two vectors. If two vectors point in the same
+direction, the angle between them is small and the similarity score is close to 1. If they
+point in completely different directions, the score is close to 0.
+
+This is useful for text because two chunks about the same topic will point in a similar
+direction even if they use different words. It also ignores the length of the vectors, which
+means a short chunk and a long chunk about the same topic are still considered similar.
+
+
+Limitations of This Implementation
+===================================
+
+This chatbot stores everything in memory, so all documents are re-ingested every time you
+start it. There is no persistence between sessions. For larger document sets, a proper
+vector database like Chroma, Qdrant, or Pinecone would be more appropriate.
+
+The chatbot also only supports plain text and Markdown files. PDF support would require
+a parsing library to extract the text first.
+
+Chat history is kept only for the current session. When you quit and restart, the model
+has no memory of previous conversations.
+
+
+Tech Stack
+==========
+
+- Runtime:         Node.js with TypeScript
+- LLM:             gpt-4o-mini (OpenAI)
+- Embeddings:      text-embedding-3-small (OpenAI)
+- Vector store:    in-memory with cosine similarity (no external database)
+- CLI:             Node.js readline module
+- Config:          dotenv for environment variables
